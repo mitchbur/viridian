@@ -1,0 +1,3 @@
+// configured information
+#define VIRIDIAN_VERSION_MAJOR @veridian_VERSION_MAJOR@
+#define VIRIDIAN_VERSION_MINOR @veridian_VERSION_MINOR@
