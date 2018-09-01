@@ -1,9 +1,9 @@
 project ( libviridian_unittest )
 
 set ( EXTRA_LIBS ${EXTRA_LIBS} viridian )
-include_directories ( "${PROJECT_SOURCE_DIR}/.." )
+include_directories ( "${libviridian_SOURCE_DIR}" )
 
-# google gtest library
+# googletest library
 set ( EXTRA_LIBS ${EXTRA_LIBS} gtest gtest_main )
 if ( CMAKE_HOST_UNIX )
 	include_directories ( "/usr/local/include" )
