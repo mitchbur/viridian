@@ -1,1 +1,2 @@
-## C++ library, map of tagged string values
+
+example C++ library and unit test code directory structure with CMake build set-up
