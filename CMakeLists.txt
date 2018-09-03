@@ -10,7 +10,7 @@ add_library( viridian
 
 # The version number.
 set ( viridian_VERSION_MAJOR 0 )
-set ( viridian_VERSION_MINOR 1 )
+set ( viridian_VERSION_MINOR 2 )
 
 # configure the header file containing version information
 configure_file (
