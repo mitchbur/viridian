@@ -1,10 +1,13 @@
 cmake_minimum_required (VERSION 3.11)
 
-project ( libviridian )
+project ( viridian )
 
-add_definitions ( -std=c++14 )
+# standard c++14
+set ( CMAKE_CXX_STANDARD 14 )
+set ( CMAKE_CXX_STANDARD_REQUIRED ON )
+set ( CMAKE_CXX_EXTENSIONS OFF )
 
-add_library( viridian
+add_library( ${PROJECT_NAME}
 	viridian.h
 	viridian.cpp )
 

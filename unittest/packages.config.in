@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<packages>
+  <package id="@googletest_NUGET_ID@" version="@googletest_NUGET_VERSION@" targetFramework="@googletest_NUGET_TARGET@" />
+</packages>
