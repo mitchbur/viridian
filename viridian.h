@@ -3,4 +3,6 @@
 
 #include "viridian_config.h"
 
+#include "vectorpair.h"
+
 #endif
