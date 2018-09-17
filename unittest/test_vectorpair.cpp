@@ -7,6 +7,8 @@
 #include "viridian.h"
 #include <gtest/gtest.h>
 
+using namespace viridian;
+
 TEST( vectorpair, one_row )
 {
   using vp_test_type = vectorpair<double, int>;
@@ -57,4 +59,22 @@ TEST( vectorpair, row_ref )
   const auto obs_newval_row_1 = vpair[1];
   EXPECT_EQ( std::get<0>(obs_newval_row_1), f_expected_1 );
   EXPECT_EQ( std::get<1>(obs_newval_row_1), u_expected_1 );
+}
+
+
+TEST( vectorpair, iterator )
+{
+  using vp_test_type = vectorpair<int, std::string>;
+  vp_test_type vpair {};
+  float i_expected_0 = 3;
+  std::string s_expected_0 = u8"trois";
+  vpair.push_back( std::make_tuple( i_expected_0, s_expected_0 ) );
+
+  auto iter = vpair.begin();
+  auto obs_row = *iter;
+  int i_obs;
+  std::string s_obs;
+  std::tie( i_obs, s_obs ) = obs_row;
+  EXPECT_EQ( i_obs, i_expected_0 );
+  EXPECT_EQ( s_obs, s_expected_0 );
 }
