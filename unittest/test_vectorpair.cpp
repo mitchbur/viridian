@@ -98,10 +98,15 @@ TEST_F( Test_vectorpair_iterator, input_iterator_neq )
   auto begin_iter = blue_vpair.begin();
   auto end_iter = blue_vpair.end();
   EXPECT_TRUE( begin_iter != end_iter );
+  
   auto second_begin_iter = blue_vpair.begin();
-  EXPECT_TRUE( begin_iter != second_begin_iter );
+  EXPECT_TRUE( begin_iter == second_begin_iter );
+  EXPECT_TRUE( end_iter != second_begin_iter );
+
   auto second_end_iter = blue_vpair.end();
+  EXPECT_TRUE( end_iter == second_end_iter );
   EXPECT_TRUE( begin_iter != second_end_iter );
+  EXPECT_TRUE( second_begin_iter != second_end_iter );
 }
 
 TEST_F( Test_vectorpair_iterator, input_iterator_deref )
@@ -128,7 +133,7 @@ TEST_F( Test_vectorpair_iterator, input_iterator_preincr )
   }
 }
 
-TEST_F( Test_vectorpair_iterator, fwd_iterator_postincr )
+TEST_F( Test_vectorpair_iterator, forward_iterator_postincr )
 {
   auto iter = blue_vpair.begin();
 
@@ -138,16 +143,66 @@ TEST_F( Test_vectorpair_iterator, fwd_iterator_postincr )
   EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[1] );
 }
 
-TEST_F( Test_vectorpair_iterator, fwd_iterator_deref_postincr )
+TEST_F( Test_vectorpair_iterator, forward_iterator_deref_postincr )
 {
   auto iter = blue_vpair.begin();
-  ++iter;
+
+  for ( int k = 0; k < blue_expected_size-1; ++k )
+  {
+    // return value should be element k
+    // iter should point to element k+1
+    auto obs_postincr_row = *iter++;
+    EXPECT_EQ( std::get<0>(obs_postincr_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_postincr_row), blue_expected_s_values[k] );
+    auto obs_iter_row = *iter;
+    EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[k+1] );
+    EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k+1] );
+  }
+}
+
+TEST_F( Test_vectorpair_iterator, bidirectional_iterator_predecr )
+{
+  auto iter = blue_vpair.end();
+  // decrement from end expecting elements in range [ N-1 .. 0 ]
+  for ( int k = blue_expected_size-1; k >= 0; --k )
+  {
+    auto decr_iter = --iter;
+    // both the return value and iter should point to element k
+    auto obs_iter_row = *iter;
+    EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k] );
+    auto obs_decr_iter_row = *decr_iter;
+    EXPECT_EQ( std::get<0>(obs_decr_iter_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_decr_iter_row), blue_expected_s_values[k] );
+  }
+}
+
+TEST_F( Test_vectorpair_iterator, bidirectional_iterator_postdecr )
+{
+  auto iter = blue_vpair.end();
+  for ( int k = blue_expected_size - 1; k >= 0; --k )
+  {
+    iter--;
+    auto obs_iter_row = *iter;
+    EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k] );
+  }
+}
+
+TEST_F( Test_vectorpair_iterator, bidirectional_iterator_deref_postdecr )
+{
+  auto iter = blue_vpair.end();
+  --iter;
   
-  auto obs_preincr_row = *iter++;
-  // iter should point to element 2, return value should point to element 1
-  EXPECT_EQ( std::get<0>(obs_preincr_row), blue_expected_f_values[1] );
-  EXPECT_EQ( std::get<1>(obs_preincr_row), blue_expected_s_values[1] );
-  auto obs_postincr_row = *iter;
-  EXPECT_EQ( std::get<0>(obs_postincr_row), blue_expected_f_values[2] );
-  EXPECT_EQ( std::get<1>(obs_postincr_row), blue_expected_s_values[2] );
+  for ( int k = blue_expected_size-1; k > 0; --k )
+  {
+    // return value should be element k
+    // iter should point to element k-1
+    auto obs_postdecr_row = *iter--;
+    EXPECT_EQ( std::get<0>(obs_postdecr_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_postdecr_row), blue_expected_s_values[k] );
+    auto obs_iter_row = *iter;
+    EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[k-1] );
+    EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k-1] );
+  }
 }

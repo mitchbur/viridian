@@ -110,6 +110,11 @@ namespace viridian {
       return ( this->pos_ != b.pos_ );
     }
 
+    inline bool operator== (const iterator& b) const
+    {
+      return ( this->pos_ == b.pos_ );
+    }
+    
     inline reference operator*() const
     {
       return container_[this->pos_];
