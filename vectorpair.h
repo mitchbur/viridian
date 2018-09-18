@@ -11,7 +11,7 @@
 #include <vector>
 
 namespace viridian {
-  
+
   template< typename _TA, typename _TB >
   class vectorpair;
   
@@ -22,8 +22,13 @@ namespace viridian {
   class vectorpair
   {
   public:
-    using row_type = std::tuple< _TA, _TB >;
-    using reference_row_type = std::tuple< _TA&, _TB& >;
+    using value_type = std::tuple< _TA, _TB >;
+    using reference = std::tuple< _TA&, _TB& >;
+    using const_reference = std::tuple< const _TA&, const _TB& >;
+    using pointer = void;
+    using const_pointer = void;
+    using iterator = vectorpair_iterator_<_TA,_TB>;
+
     std::vector< _TA > vector_a;
     std::vector< _TB > vector_b;
     
@@ -32,7 +37,7 @@ namespace viridian {
       return std::min( vector_a.size(), vector_b.size() );
     }
     
-    void push_back( row_type r )
+    void push_back( value_type r )
     {
       std::size_t curr_size = this->size();
       if ( vector_a.size() < curr_size )
@@ -51,18 +56,24 @@ namespace viridian {
       }
     }
     
-    inline row_type operator[]( int k ) const
+    inline value_type operator[]( int k ) const
     {
       return std::make_tuple( vector_a[k], vector_b[k] );
     }
     
-    inline reference_row_type operator[]( int k )
+    inline reference operator[]( int k )
     {
       return std::tie( vector_a[k], vector_b[k] );
     }
     
-    vectorpair_iterator_<_TA,_TB> begin() {
-      return vectorpair_iterator_<_TA,_TB>{*this,0};
+    iterator begin( ) noexcept
+    {
+      return iterator{*this,0};
+    }
+    
+    iterator end( ) noexcept
+    {
+      return iterator{*this,static_cast<typename iterator::difference_type>(this->size())};
     }
   };
   
@@ -70,14 +81,14 @@ namespace viridian {
   class vectorpair_iterator_
   {
   public:
-    using self_type = vectorpair_iterator_< _TA, _TB >;
     using container_type = vectorpair< _TA, _TB >;
+    using iterator = typename container_type::iterator;
 
     using iterator_category = std::random_access_iterator_tag;
-    using value_type = typename container_type::row_type;
+    using value_type = typename container_type::value_type;
     using difference_type = std::ptrdiff_t;
     using pointer = void;
-    using reference = typename vectorpair<_TA,_TB>::reference_row_type;
+    using reference = typename container_type::reference;
 
   protected:
     container_type& container_;
@@ -89,46 +100,119 @@ namespace viridian {
     : container_( c )
     , pos_(i){}
     
-    // Get the data element at this position
+    // +--- input iterator
+    // |
+    // +--- forward iterator
+    // |
+    
+    inline bool operator!= (const iterator& b) const
+    {
+      return ( this->pos_ != b.pos_ );
+    }
+
     inline reference operator*() const
     {
-      return container_[pos_];
+      return container_[this->pos_];
     }
     
-    // ??? pointer operator->() const;
+    //! pre-increment operator
+    inline iterator& operator++()
+    {
+      ++this->pos_;
+      return *this;
+    }
+    //! post-increment operator
+    inline iterator operator++(int)
+    {
+      iterator before = *this;
+      ++this->pos_;
+      return before;
+    }
+
+    // +--- bidirectional iterator
+    // |
+
+    //! pre-decrement operator
+    inline iterator& operator--()
+    {
+      --this->pos_;
+      return *this;
+    }
+    //! post-decrement operator
+    inline iterator operator--(int)
+    {
+      iterator before = *this;
+      --this->pos_;
+      return before;
+    }
+
+    // +--- random access iterator
+    // |
     
-    // Move position forward 1 place
-    self_type& operator++();
-    self_type operator++(int);
+    inline iterator& operator+= (difference_type k) const
+    {
+      this->pos_ += k;
+      return *this;
+    }
     
-    // Move position backward 1 place
-    self_type& operator--();
-    self_type operator--(int);
+    inline iterator operator+ (difference_type k) const
+    {
+      iterator b = *this;
+      b += k;
+      return b;
+    }
     
+    inline iterator& operator-= (difference_type k) const
+    {
+      this->pos_ -= k;
+      return *this;
+    }
+
+    inline iterator operator- (difference_type k) const
+    {
+      iterator b = *this;
+      b.pos_ -= k;
+      return b;
+    }
     
-    /*+*/  // Random access operations
+    inline difference_type operator- (const iterator& b) const
+    {
+      return this->pos_ - b.pos_;
+    }
     
-    ptrdiff_t operator- (const self_type&) const;
-    // how many positions apart are these iterators?
+    inline reference operator[]( int k ) const
+    {
+      return container_[this->pos_+k];
+    }
     
-    self_type operator+ (ptrdiff_t k) const;
-    // Get a new iterator k positions past this one.
+    inline bool operator< (const iterator& b) const
+    {
+      return ( this->pos_ < b.pos_ );
+    }
     
-    self_type operator- (ptrdiff_t k) const;
-    // Get a new iterator k positions before this one.
-    /*-*/
-    // Comparison operators
-    bool operator== (const self_type&) const;
-    bool operator!= (const self_type&) const;/*+*/
-    bool operator<  (const self_type&) const;
-    bool operator<= (const self_type&) const;
-    bool operator>  (const self_type&) const;
-    bool operator>= (const self_type&) const;/*-*/
-  private:
-    /*...*/
+    inline bool operator>  (const iterator& b) const
+    {
+      return ( this->pos_ > b.pos_ );
+    }
+    
+    inline bool operator>= (const iterator& b) const
+    {
+      return ( this->pos_ >= b.pos_ );
+    }
+
+    inline bool operator<= (const iterator& b) const
+    {
+      return ( this->pos_ <= b.pos_ );
+    }
   };
   
-  
+  template< typename _TA, typename _TB >
+  inline typename vectorpair_iterator_<_TA,_TB>::iterator
+  operator+ ( typename vectorpair_iterator_<_TA,_TB>::difference_type k,
+             typename vectorpair_iterator_<_TA,_TB>::iterator& it )
+  {
+    return it + k;
+  }
 }
 
 #endif /* vectorpair_h */
