@@ -154,7 +154,7 @@ namespace viridian {
     // +--- random access iterator
     // |
     
-    inline iterator& operator+= (difference_type k) const
+    inline iterator& operator+= (difference_type k)
     {
       this->pos_ += k;
       return *this;
@@ -167,7 +167,7 @@ namespace viridian {
       return b;
     }
     
-    inline iterator& operator-= (difference_type k) const
+    inline iterator& operator-= (difference_type k)
     {
       this->pos_ -= k;
       return *this;
@@ -212,11 +212,11 @@ namespace viridian {
   };
   
   template< typename _TA, typename _TB >
-  inline typename vectorpair_iterator_<_TA,_TB>::iterator
-  operator+ ( typename vectorpair_iterator_<_TA,_TB>::difference_type k,
-             typename vectorpair_iterator_<_TA,_TB>::iterator& it )
+  vectorpair_iterator_<_TA,_TB>
+  operator+( const typename vectorpair_iterator_<_TA,_TB>::difference_type & a,
+            const vectorpair_iterator_<_TA,_TB>& b)
   {
-    return it + k;
+    return b + a;
   }
 }
 

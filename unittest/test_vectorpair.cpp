@@ -206,3 +206,166 @@ TEST_F( Test_vectorpair_iterator, bidirectional_iterator_deref_postdecr )
     EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k-1] );
   }
 }
+
+TEST_F( Test_vectorpair_iterator, random_access_iterator_pluseq_zero )
+{
+  auto iter = blue_vpair.begin();
+  iter += 0;
+  auto obs_iter_row = *iter;
+  EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[0] );
+  EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[0] );
+}
+
+TEST_F( Test_vectorpair_iterator, random_access_iterator_pluseq_one )
+{
+  auto iter = blue_vpair.begin();
+  for ( int k = 0; k < blue_expected_size; ++k )
+  {
+    auto obs_iter_row = *iter;
+    EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k] );
+    iter += 1;
+  }
+}
+
+TEST_F( Test_vectorpair_iterator, random_access_iterator_pluseq_two )
+{
+  auto iter = blue_vpair.begin();
+  for ( int k = 0; k < blue_expected_size; k += 2 )
+  {
+    auto obs_iter_row = *iter;
+    EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k] );
+    iter += 2;
+  }
+}
+
+TEST_F( Test_vectorpair_iterator, random_access_iterator_add )
+{
+  auto iter = blue_vpair.begin();
+  constexpr int step = 2;
+  for ( int k = step; k < blue_expected_size; k += step )
+  {
+    auto advanced_iter = iter + step;
+    auto obs_iter_row = *iter;
+    EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[k-step] );
+    EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k-step] );
+    auto obs_advanced_iter_row = *advanced_iter;
+    EXPECT_EQ( std::get<0>(obs_advanced_iter_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_advanced_iter_row), blue_expected_s_values[k] );
+
+    iter += step;
+  }
+}
+
+TEST_F( Test_vectorpair_iterator, random_access_iterator_commutated_add )
+{
+  auto iter = blue_vpair.begin();
+  int step = 2;
+  for ( int k = step; k < blue_expected_size; k += step )
+  {
+    auto advanced_iter = step + iter;
+    auto obs_iter_row = *iter;
+    EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[k-step] );
+    EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k-step] );
+    auto obs_advanced_iter_row = *advanced_iter;
+    EXPECT_EQ( std::get<0>(obs_advanced_iter_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_advanced_iter_row), blue_expected_s_values[k] );
+    
+    iter += step;
+  }
+}
+
+TEST_F( Test_vectorpair_iterator, random_access_iterator_minuseq_zero )
+{
+  auto iter = blue_vpair.begin();
+  ++iter;
+
+  iter -= 0;
+  auto obs_iter_row = *iter;
+  EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[1] );
+  EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[1] );
+}
+
+TEST_F( Test_vectorpair_iterator, random_access_iterator_minuseq_one )
+{
+  auto iter = blue_vpair.end();
+  --iter;
+
+  for ( int k = blue_expected_size-1; k >= 0; --k )
+  {
+    auto obs_iter_row = *iter;
+    EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k] );
+    iter -= 1;
+  }
+}
+
+TEST_F( Test_vectorpair_iterator, random_access_iterator_minuseq_two )
+{
+  constexpr int step = 2;
+  auto iter = blue_vpair.end();
+  --iter;  // point to last element in vector
+
+  for ( int k = blue_expected_size-1; k >= 0; k -= step )
+  {
+    auto obs_iter_row = *iter;
+    EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k] );
+    iter -= step;
+  }
+}
+
+TEST_F( Test_vectorpair_iterator, random_access_iterator_subtract )
+{
+  auto iter = blue_vpair.end();
+  --iter;  // point to last element in vector
+
+  constexpr int step = 2;
+  for ( int k = blue_expected_size - 1; k >= step; k -= step )
+  {
+    auto decremented_iter = iter - step;
+    auto obs_iter_row = *iter;
+    EXPECT_EQ( std::get<0>(obs_iter_row), blue_expected_f_values[k] );
+    EXPECT_EQ( std::get<1>(obs_iter_row), blue_expected_s_values[k] );
+    auto obs_decremented_iter_row = *decremented_iter;
+    EXPECT_EQ( std::get<0>(obs_decremented_iter_row), blue_expected_f_values[k-step] );
+    EXPECT_EQ( std::get<1>(obs_decremented_iter_row), blue_expected_s_values[k-step] );
+    
+    iter -= step;
+  }
+}
+
+TEST_F( Test_vectorpair_iterator, random_access_iterator_difference )
+{
+  auto low_iter = blue_vpair.begin();
+  auto high_iter = blue_vpair.end();
+  vp_test_type::iterator::difference_type diff;
+  
+  // check differences as low_iter is increased
+  for ( vp_test_type::iterator::difference_type expected_diff = blue_expected_size;
+       expected_diff <= 0; --expected_diff )
+  {
+    diff = high_iter - low_iter;
+    EXPECT_EQ( diff, expected_diff );
+    
+    ++low_iter;
+  }
+}
+
+TEST_F( Test_vectorpair_iterator, random_access_iterator_difference_b )
+{
+  auto low_iter = blue_vpair.begin();
+  auto high_iter = blue_vpair.end();
+  vp_test_type::iterator::difference_type diff;
+  
+  // check differences as high_iter is decreased
+  for ( vp_test_type::iterator::difference_type expected_diff = blue_expected_size;
+       expected_diff <= 0; --expected_diff )
+  {
+    diff = high_iter - low_iter;
+    EXPECT_EQ( diff, expected_diff );
+    
+    --high_iter;
+  }
+}
