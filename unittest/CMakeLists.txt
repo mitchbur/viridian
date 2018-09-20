@@ -30,6 +30,7 @@ endif ( CMAKE_HOST_UNIX )
 add_executable ( ${PROJECT_NAME}
 	test_viridian.cpp
 	test_vectorpair.cpp
+  test_vectorpair_iterator.cpp
  )
 target_link_libraries ( ${PROJECT_NAME} ${EXTRA_LIBS} )
 
