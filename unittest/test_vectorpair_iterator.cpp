@@ -41,6 +41,25 @@ const std::string Test_vectorpair_iterator::blue_expected_s_values[] = {
   u8"zero"
 };
 
+TEST_F( Test_vectorpair_iterator, copy_constructor )
+{
+  vp_test_type::iterator an_iter = blue_vpair.begin();
+  vp_test_type::iterator constructed_copy { an_iter };
+  EXPECT_EQ( an_iter, constructed_copy );
+  vp_test_type::iterator incremented_constructed_copy { ++constructed_copy };
+  EXPECT_NE( an_iter, incremented_constructed_copy );
+}
+
+TEST_F( Test_vectorpair_iterator, copy_assignment )
+{
+  vp_test_type::iterator an_iter = blue_vpair.begin();
+  vp_test_type::iterator iter_copy;
+  iter_copy = an_iter;
+  EXPECT_EQ( an_iter, iter_copy );
+  vp_test_type::iterator incremented_iter_copy { ++iter_copy };
+  EXPECT_NE( an_iter, incremented_iter_copy );
+}
+
 TEST_F( Test_vectorpair_iterator, input_iterator_neq )
 {
   auto begin_iter = blue_vpair.begin();
@@ -317,4 +336,3 @@ TEST_F( Test_vectorpair_iterator, random_access_iterator_difference_b )
     --high_iter;
   }
 }
-

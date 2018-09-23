@@ -11,7 +11,7 @@
 #include <vector>
 
 namespace viridian {
-
+  
   template< typename _TA, typename _TB >
   class vectorpair;
   
@@ -28,7 +28,7 @@ namespace viridian {
     using pointer = void;
     using const_pointer = void;
     using iterator = vectorpair_iterator_<_TA,_TB>;
-
+    
     std::vector< _TA > vector_a;
     std::vector< _TB > vector_b;
     
@@ -83,22 +83,39 @@ namespace viridian {
   public:
     using container_type = vectorpair< _TA, _TB >;
     using iterator = typename container_type::iterator;
-
+    
     using iterator_category = std::random_access_iterator_tag;
     using value_type = typename container_type::value_type;
     using difference_type = std::ptrdiff_t;
     using pointer = void;
     using reference = typename container_type::reference;
-
+    
   protected:
-    container_type& container_;
+    container_type* p_container_;
     difference_type pos_;
-
+    //    static container_type no_container;
+    
   public:
-    vectorpair_iterator_( ) = default;
-    vectorpair_iterator_( container_type& c, difference_type i)
-    : container_( c )
-    , pos_(i){}
+    vectorpair_iterator_( )
+    : p_container_( nullptr )
+    , pos_( 0 )
+    {}
+    
+    ~vectorpair_iterator_( ) = default;
+    
+    // construct for position i of container c
+    vectorpair_iterator_( container_type& c, difference_type i )
+    : p_container_( &c )
+    , pos_(i)
+    {}
+    
+    // default copy constructor and copy assignment operators
+    vectorpair_iterator_ ( const vectorpair_iterator_ & ) = default;
+    vectorpair_iterator_ & operator= ( const vectorpair_iterator_ & ) = default;
+    
+    // default move constructor and move assignment operators
+    vectorpair_iterator_ ( vectorpair_iterator_ && ) = default;
+    vectorpair_iterator_ &  operator= ( vectorpair_iterator_ && ) = default;
     
     // +--- input iterator
     // |
@@ -109,7 +126,7 @@ namespace viridian {
     {
       return ( this->pos_ != b.pos_ );
     }
-
+    
     inline bool operator== (const iterator& b) const
     {
       return ( this->pos_ == b.pos_ );
@@ -117,7 +134,7 @@ namespace viridian {
     
     inline reference operator*() const
     {
-      return container_[this->pos_];
+      return (*p_container_)[this->pos_];
     }
     
     //! pre-increment operator
@@ -133,10 +150,10 @@ namespace viridian {
       ++this->pos_;
       return before;
     }
-
+    
     // +--- bidirectional iterator
     // |
-
+    
     //! pre-decrement operator
     inline iterator& operator--()
     {
@@ -150,7 +167,7 @@ namespace viridian {
       --this->pos_;
       return before;
     }
-
+    
     // +--- random access iterator
     // |
     
@@ -172,7 +189,7 @@ namespace viridian {
       this->pos_ -= k;
       return *this;
     }
-
+    
     inline iterator operator- (difference_type k) const
     {
       iterator b = *this;
@@ -187,7 +204,7 @@ namespace viridian {
     
     inline reference operator[]( int k ) const
     {
-      return container_[this->pos_+k];
+      return (*p_container_)[this->pos_+k];
     }
     
     inline bool operator< (const iterator& b) const
@@ -204,7 +221,7 @@ namespace viridian {
     {
       return ( this->pos_ >= b.pos_ );
     }
-
+    
     inline bool operator<= (const iterator& b) const
     {
       return ( this->pos_ <= b.pos_ );
@@ -218,6 +235,10 @@ namespace viridian {
   {
     return b + a;
   }
+  
+  //  template< typename _TA, typename _TB >
+  //  vectorpair<_TA,_TB> vectorpair_iterator_<_TA,_TB>::no_container {};
 }
+
 
 #endif /* vectorpair_h */
