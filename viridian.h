@@ -3,6 +3,7 @@
 
 #include "viridian_config.h"
 
+#include "index_iterator.h"
 #include "vectorpair.h"
 
 #endif
