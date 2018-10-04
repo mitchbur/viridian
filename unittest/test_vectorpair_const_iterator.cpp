@@ -6,6 +6,8 @@
 //
 #include "viridian.h"
 #include <gtest/gtest.h>
+#include <algorithm>
+#include <iterator>
 
 using namespace viridian;
 
@@ -337,4 +339,27 @@ TEST_F( Test_vectorpair_const_iterator, random_access_iterator_difference_b )
     
     --high_iter;
   }
+}
+
+TEST_F( Test_vectorpair_const_iterator, algo_equal )
+{
+  bool all_f_values_equal =
+  std::equal(
+             blue_vpair.cbegin(), blue_vpair.cend(),
+             std::cbegin( blue_expected_f_values ),
+             [] ( auto row, auto fval ) {
+               return std::get<0>(row) == fval;
+             }
+             );
+  EXPECT_TRUE( all_f_values_equal );
+  
+  bool all_s_values_equal =
+  std::equal(
+             blue_vpair.cbegin(), blue_vpair.cend(),
+             std::cbegin( blue_expected_s_values ),
+             [] ( auto row, auto sval ) {
+               return std::get<1>(row) == sval;
+             }
+             );
+  EXPECT_TRUE( all_s_values_equal );
 }
