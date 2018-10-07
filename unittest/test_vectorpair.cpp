@@ -35,7 +35,7 @@ TEST( Test_vectorpair, row_ref )
   unsigned u_expected_0 = 11;
   vpair.push_back( std::make_tuple( f_expected_0, u_expected_0 ) );
 
-  float f_expected_1 = -6.54;
+  float f_expected_1 = -6.54F;
   unsigned u_expected_1 = 61;
   vpair.push_back( std::make_tuple( f_expected_1, u_expected_1 ) );
 
