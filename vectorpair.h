@@ -27,7 +27,7 @@ namespace viridian {
 
     using value_type = std::tuple< _TA, _TB >;
     using reference = std::tuple< _TA&, _TB& >;
-    using const_reference = std::tuple< const _TA, const _TB >;
+    using const_reference = std::tuple< const _TA&, const _TB& >;
     using pointer = vectorpair_pointer< self_type, typename self_type::reference >;
     using const_pointer = vectorpair_pointer< const self_type, typename self_type::const_reference >;
     using iterator = index_iterator< pointer >;
@@ -62,9 +62,9 @@ namespace viridian {
       }
     }
     
-    inline value_type operator[]( int k ) const
+    inline const_reference operator[]( int k ) const
     {
-      return std::make_tuple( vector_a[k], vector_b[k] );
+      return std::tie( vector_a[k], vector_b[k] );
     }
     
     inline reference operator[]( int k )
@@ -113,7 +113,7 @@ namespace viridian {
     using pointer = vectorpair_pointer;
     using container_type = _CT;
     using reference = _RT;
-    using value_type = typename container_type::value_type;
+    using value_type = reference;
     using difference_type = std::ptrdiff_t;
     
     vectorpair_pointer( )
@@ -162,5 +162,15 @@ namespace viridian {
   };
 
 } /* end namespace */
+
+namespace std {
+  template< class ... _T >
+  inline void swap( std::tuple< _T& ... > u, std::tuple< _T& ... > v )
+  {
+    std::tuple< _T ... > orig_u = std::move( u );
+    u = std::move( v );
+    v = std::move( orig_u );
+  }
+}
 
 #endif /* vectorpair_h */

@@ -9,6 +9,7 @@ set ( CMAKE_CXX_EXTENSIONS OFF )
 
 add_library( ${PROJECT_NAME}
 	viridian.h
+	index_iterator.h
 	vectorpair.h
 	viridian.cpp )
 

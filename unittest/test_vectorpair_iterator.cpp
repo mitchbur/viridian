@@ -15,6 +15,8 @@ protected:
   vp_test_type blue_vpair;
   static const float blue_expected_f_values[5];
   static const std::string blue_expected_s_values[5];
+  static const int blue_expected_f_order[5];
+  static const int blue_expected_s_order[5];
   static constexpr std::size_t blue_expected_size =
   std::cend(blue_expected_f_values) - std::cbegin( blue_expected_f_values);
   
@@ -33,6 +35,7 @@ protected:
 const float Test_vectorpair_iterator::blue_expected_f_values[] = {
   3.14F, 1962.0911F, 1961.1110F, -13.125F, 0.0F
 };
+const int Test_vectorpair_iterator::blue_expected_f_order[] = { 3, 4, 0, 2, 1 };
 const std::string Test_vectorpair_iterator::blue_expected_s_values[] = {
   u8"trois",
   u8"soixante-et-deux",
@@ -40,6 +43,7 @@ const std::string Test_vectorpair_iterator::blue_expected_s_values[] = {
   u8"moins treize",
   u8"zero"
 };
+const int Test_vectorpair_iterator::blue_expected_s_order[] = { 3, 1, 2, 0, 4 };
 
 TEST_F( Test_vectorpair_iterator, copy_constructor )
 {
@@ -355,6 +359,66 @@ TEST_F( Test_vectorpair_iterator, algo_equal )
              std::cbegin( blue_expected_s_values ),
              [] ( auto row, auto sval ) {
                return std::get<1>(row) == sval;
+             }
+             );
+  EXPECT_TRUE( all_s_values_equal );
+}
+
+TEST_F( Test_vectorpair_iterator, algo_sort )
+{
+  std::sort(
+             blue_vpair.begin(), blue_vpair.end(),
+             [] ( const auto& a, const auto& b ) {
+               return std::get<0>( a ) < std::get<0>( b );
+             }
+             );
+
+  bool all_f_values_equal =
+  std::equal(
+             blue_vpair.begin(), blue_vpair.end(),
+             std::cbegin( blue_expected_f_order ),
+             [] ( auto row, auto ordered_k ) {
+               return std::get<0>(row) == blue_expected_f_values[ ordered_k ];
+             }
+             );
+  EXPECT_TRUE( all_f_values_equal );
+
+  bool all_s_values_equal =
+  std::equal(
+             blue_vpair.begin(), blue_vpair.end(),
+             std::cbegin( blue_expected_f_order ),
+             [] ( auto row, auto ordered_k ) {
+               return std::get<1>(row) == blue_expected_s_values[ ordered_k ];
+             }
+             );
+  EXPECT_TRUE( all_s_values_equal );
+}
+
+TEST_F( Test_vectorpair_iterator, algo_sort_string )
+{
+  std::sort(
+            blue_vpair.begin(), blue_vpair.end(),
+            [] ( const auto& a, const auto& b ) {
+              return std::get<1>( a ) < std::get<1>( b );
+            }
+            );
+  
+  bool all_f_values_equal =
+  std::equal(
+             blue_vpair.begin(), blue_vpair.end(),
+             std::cbegin( blue_expected_s_order ),
+             [] ( auto row, auto ordered_k ) {
+               return std::get<0>(row) == blue_expected_f_values[ ordered_k ];
+             }
+             );
+  EXPECT_TRUE( all_f_values_equal );
+  
+  bool all_s_values_equal =
+  std::equal(
+             blue_vpair.begin(), blue_vpair.end(),
+             std::cbegin( blue_expected_s_order ),
+             [] ( auto row, auto ordered_k ) {
+               return std::get<1>(row) == blue_expected_s_values[ ordered_k ];
              }
              );
   EXPECT_TRUE( all_s_values_equal );

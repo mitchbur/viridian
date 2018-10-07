@@ -7,6 +7,7 @@
 #define index_iterator_h
 
 #include <iterator>
+#include <deque>
 
 namespace viridian {
   
@@ -66,7 +67,7 @@ namespace viridian {
     
     inline reference operator*() const
     {
-      return core_[0];
+      return *core_;
     }
     
     //! pre-increment operator
