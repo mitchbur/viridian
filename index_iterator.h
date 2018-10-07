@@ -20,8 +20,8 @@ namespace viridian {
     
     using iterator_category = std::random_access_iterator_tag;
     using value_type = typename core_iterator::value_type;
-    using difference_type = typename core_iterator::difference_type;
     using reference = typename core_iterator::reference;
+    using difference_type = typename core_iterator::difference_type;
     using pointer = typename core_iterator::pointer;
 
   private:
@@ -49,13 +49,8 @@ namespace viridian {
     // default move constructor and move assignment operators
     index_iterator ( index_iterator && ) = default;
     index_iterator &  operator= ( index_iterator && ) = default;
-    
-    // +--- input iterator
-    // |
-    // +--- forward iterator
-    // |
-    
-    inline bool operator!= (const iterator& b) const
+
+	inline bool operator!= (const iterator& b) const
     {
       return ( this->core_ - b.core_ ) != 0;
     }

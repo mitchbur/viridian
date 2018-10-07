@@ -16,7 +16,7 @@ namespace viridian {
   template< typename _TA, typename _TB >
   class vectorpair;
   
-  template <typename _CT, typename _RT >
+  template <typename _CT, typename _RT, typename _PT >
   class vectorpair_pointer;
 
   template< typename _TA, typename _TB >
@@ -25,13 +25,17 @@ namespace viridian {
   public:
     using self_type = vectorpair;
 
-    using value_type = std::tuple< _TA, _TB >;
-    using reference = std::tuple< _TA&, _TB& >;
-    using const_reference = std::tuple< const _TA&, const _TB& >;
-    using pointer = vectorpair_pointer< self_type, typename self_type::reference >;
-    using const_pointer = vectorpair_pointer< const self_type, typename self_type::const_reference >;
-    using iterator = index_iterator< pointer >;
-    using const_iterator = index_iterator< const_pointer >;
+    using value_type = std::tuple<_TA, _TB>;
+    using reference = std::tuple<_TA&, _TB&>;
+    using const_reference = std::tuple<const _TA&, const _TB&>;
+    using pointer = std::tuple<_TA*, _TB*>;
+    using const_pointer = std::tuple<const _TA*, const _TB*>;
+
+    using iter_pointer = vectorpair_pointer<self_type, reference, pointer>;
+    using iter_const_pointer =
+      vectorpair_pointer<const self_type, const_reference, const_pointer>;
+    using iterator = index_iterator<iter_pointer>;
+    using const_iterator = index_iterator<iter_const_pointer>;
 
     std::vector< _TA > vector_a;
     std::vector< _TB > vector_b;
@@ -74,24 +78,24 @@ namespace viridian {
     
     inline iterator begin( ) noexcept
     {
-      return iterator { pointer { *this,0} };
+      return iterator { iter_pointer { *this,0} };
     }
 
     inline const_iterator begin( ) const noexcept
     {
-      return const_iterator { const_pointer { *this,0} };
+      return const_iterator{ iter_const_pointer{ *this, 0 } };
     }
 
     inline iterator end( ) noexcept
     {
       typename iterator::difference_type end_index = this->size();
-      return iterator { pointer { *this,end_index} };
+      return iterator{ iter_pointer{ *this, end_index } };
     }
     
     inline const_iterator end( ) const noexcept
     {
       typename iterator::difference_type end_index = this->size();
-      return const_iterator { const_pointer { *this,end_index} };
+      return const_iterator{ iter_const_pointer{ *this, end_index } };
     }
     
     inline const_iterator cbegin( ) const noexcept
@@ -105,17 +109,18 @@ namespace viridian {
     }
   };
 
-  template < typename _CT, typename _RT >
+  template < typename _CT, typename _RT, typename _PT >
   class vectorpair_pointer
   {
   public:
     using self_type = vectorpair_pointer;
-    using pointer = vectorpair_pointer;
     using container_type = _CT;
+
+    using value_type = typename _CT::value_type;
     using reference = _RT;
-    using value_type = reference;
     using difference_type = std::ptrdiff_t;
-    
+    using pointer = _PT;
+
     vectorpair_pointer( )
     : p_container_( nullptr )
     , pos_( 0 )
