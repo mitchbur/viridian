@@ -28,10 +28,11 @@ elseif ( CMAKE_HOST_WIN32 )
 endif ( CMAKE_HOST_UNIX )
 
 add_executable ( ${PROJECT_NAME}
-	test_viridian.cpp
 	test_vectorpair.cpp
-	test_vectorpair_iterator.cpp
+	test_vectorpair_algorithms.cpp
 	test_vectorpair_const_iterator.cpp
+	test_vectorpair_iterator.cpp
+	test_viridian.cpp
  )
 target_link_libraries ( ${PROJECT_NAME} ${EXTRA_LIBS} )
 

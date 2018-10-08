@@ -13,12 +13,11 @@ class Test_vectorpair_iterator: public ::testing::Test {
 protected:
   using vp_test_type = vectorpair<float, std::string>;
   vp_test_type blue_vpair;
-  static const float blue_expected_f_values[5];
-  static const std::string blue_expected_s_values[5];
-  static const int blue_expected_f_order[5];
-  static const int blue_expected_s_order[5];
-  static constexpr std::size_t blue_expected_size =
-  std::cend(blue_expected_f_values) - std::cbegin( blue_expected_f_values);
+  static constexpr std::size_t blue_expected_size = 5;
+  static const float blue_expected_f_values[blue_expected_size];
+  static const std::string blue_expected_s_values[blue_expected_size];
+  static const int blue_expected_f_order[blue_expected_size];
+  static const int blue_expected_s_order[blue_expected_size];
   
   void SetUp() override {
     for ( int k = 0; k < blue_expected_size; ++k )
